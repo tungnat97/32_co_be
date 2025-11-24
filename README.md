@@ -9,6 +9,10 @@ Author: Tung Nguyen
 - Project starts at `localhost:3000`
 - Swagger document located at `localhost:3000/api`
 
+## DB Diagram
+
+![alt text](static/db_diagram.png)
+
 ## API endpoints and examples
 
 - Endpoints and examples are all included in Swagger document at `localhost:3000/api`
