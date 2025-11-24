@@ -20,6 +20,7 @@ Author: Tung Nguyen
 ## Architecture decisions
 
 - Using Nest.js + MongoDB to build the backend application rapidly.
+- Each feature (Product, User, Order, Cart) is separate to one module, including Entity, Service and Controller as base layers.
 - Using JwtPassport + Guard (AdminGuard, CustomerGuard) to authenticate using JWT token + authorize roles properly -> practice standard authen + author flow in Nest.js
 - Use Controller + Service architecture. Use model to connect to database directly instead of Repository -> for rapid development.
 
