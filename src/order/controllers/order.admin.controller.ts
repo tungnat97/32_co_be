@@ -5,10 +5,15 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiExtraModels,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AdminAuth } from '../../auth/decorators/basic-auth';
+import { ApiPaginatedResponse } from '../../auth/decorators/response';
 import { AdminGuard } from '../../auth/guards/admin.guard';
-import { PaginationDto } from '../../common/dto/pagination.dto';
 import { Order } from '../entities/order.entity';
 import { OrderAdminService } from '../services/order.admin.service';
 
@@ -22,11 +27,12 @@ export class OrderAdminController {
   @Get()
   @ApiQuery({ name: 'page', type: Number })
   @ApiQuery({ name: 'limit', type: Number })
-  @ApiResponse({
-    status: 200,
-    description: 'List of all orders',
-    type: PaginationDto<Order>,
+  @ApiPaginatedResponse(Order, 'List of all orders')
+  @ApiOperation({
+    summary: 'Get all orders',
+    description: 'Retrieve a paginated list of all orders in the system.',
   })
+  @ApiExtraModels(Order)
   async findAll(
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,

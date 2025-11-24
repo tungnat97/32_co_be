@@ -10,10 +10,13 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AdminAuth } from '../../auth/decorators/basic-auth';
+import {
+  ApiPaginatedResponse,
+  ApiRecordResponse,
+} from '../../auth/decorators/response';
 import { AdminGuard } from '../../auth/guards/admin.guard';
-import { PaginationDto } from '../../common/dto/pagination.dto';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { Product } from '../entities/product.entity';
@@ -27,11 +30,11 @@ export class ProductAdminController {
   constructor(private readonly productAdminService: ProductAdminService) {}
 
   @Post()
-  @ApiResponse({
-    status: 201,
-    description: 'Product has been created successfully',
-    type: Product,
+  @ApiOperation({
+    summary: 'Create a new product',
+    description: 'Create a new product with the provided details.',
   })
+  @ApiRecordResponse(Product, 'Product has been created successfully', 201)
   async create(@Body() dto: CreateProductDto): Promise<any> {
     return this.productAdminService.create(dto);
   }
@@ -39,10 +42,10 @@ export class ProductAdminController {
   @Get()
   @ApiQuery({ name: 'page', type: Number })
   @ApiQuery({ name: 'limit', type: Number })
-  @ApiResponse({
-    status: 200,
-    description: 'List of all products',
-    type: PaginationDto<Product>,
+  @ApiPaginatedResponse(Product, 'List of all products')
+  @ApiOperation({
+    summary: 'Get all products',
+    description: 'Retrieve a paginated list of all products in the system.',
   })
   async findAll(
     @Query('page', ParseIntPipe) page = 1,
@@ -52,21 +55,22 @@ export class ProductAdminController {
   }
 
   @Get(':id')
-  @ApiResponse({
-    status: 200,
-    description: 'Product details',
-    type: Product,
+  @ApiOperation({
+    summary: 'Get product details',
+    description:
+      'Retrieve detailed information about a specific product by its ID.',
   })
+  @ApiRecordResponse(Product, 'Product details')
   async findOne(@Param('id') id: string): Promise<any> {
     return this.productAdminService.findById(id);
   }
 
-  @Put(':id')
-  @ApiResponse({
-    status: 200,
-    description: 'Product has been updated successfully',
-    type: Product,
+  @ApiOperation({
+    summary: 'Update a product',
+    description: 'Update the details of an existing product by its ID.',
   })
+  @Put(':id')
+  @ApiRecordResponse(Product, 'Product has been updated successfully')
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateProductDto,
@@ -75,11 +79,7 @@ export class ProductAdminController {
   }
 
   @Delete(':id')
-  @ApiResponse({
-    status: 200,
-    description: 'Product has been deleted successfully',
-    type: Product,
-  })
+  @ApiRecordResponse(Product, 'Product has been deleted successfully')
   async delete(@Param('id') id: string): Promise<any> {
     return this.productAdminService.delete(id);
   }

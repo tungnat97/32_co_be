@@ -1,10 +1,13 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProductCustomerService } from '../services/product.customer.service';
-import { CustomerGuard } from '../../auth/guards/customer.guard';
-import { PaginationDto } from '../../common/dto/pagination.dto';
-import { Product } from '../entities/product.entity';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomerAuth } from '../../auth/decorators/basic-auth';
+import {
+  ApiPaginatedResponse,
+  ApiRecordResponse,
+} from '../../auth/decorators/response';
+import { CustomerGuard } from '../../auth/guards/customer.guard';
+import { Product } from '../entities/product.entity';
+import { ProductCustomerService } from '../services/product.customer.service';
 
 @Controller('customer/products')
 @ApiTags('customer products')
@@ -21,10 +24,10 @@ export class ProductCustomerController {
   @ApiQuery({ name: 'categoryId', required: false, type: String })
   @ApiQuery({ name: 'upperPrice', required: false, type: Number })
   @ApiQuery({ name: 'lowerPrice', required: false, type: Number })
-  @ApiResponse({
-    status: 200,
-    description: 'List of available products',
-    type: PaginationDto<Product>,
+  @ApiPaginatedResponse(Product, 'List of available products')
+  @ApiOperation({
+    summary: 'Get all products',
+    description: 'Retrieve a paginated list of all available products.',
   })
   async findAll(
     @Query('page') page?: number,
@@ -43,11 +46,11 @@ export class ProductCustomerController {
   }
 
   @Get(':id')
-  @ApiResponse({
-    status: 200,
-    description: 'Product details',
-    type: Product,
+  @ApiOperation({
+    summary: 'Get product details',
+    description: 'Retrieve the details of a specific product.',
   })
+  @ApiRecordResponse(Product, 'Product details')
   async findById(@Param('id') id: string) {
     return this.productCustomerService.findById(id);
   }

@@ -1,7 +1,8 @@
 import { Body, Controller, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CustomerAuth } from '../../auth/decorators/basic-auth';
 import { ReqUser } from '../../auth/decorators/req-user';
+import { ApiRecordResponse } from '../../auth/decorators/response';
 import { ReqUserDto } from '../../auth/dto/response/req-user.dto';
 import { CustomerGuard } from '../../auth/guards/customer.guard';
 import { GetCartDto } from '../dto/get-cart.dto';
@@ -17,11 +18,11 @@ export class CartCustomerController {
   constructor(private readonly cartCustomerService: CartCustomerService) {}
 
   @Put()
-  @ApiResponse({
-    status: 200,
-    description: 'Cart has been updated successfully',
-    type: Cart,
+  @ApiOperation({
+    summary: 'Update customer cart',
+    description: 'Update the items in the customer cart.',
   })
+  @ApiRecordResponse(Cart, 'Cart has been updated successfully')
   async updateCart(
     @ReqUser() customer: ReqUserDto,
     @Body() data: UpdateCartDto,
@@ -30,10 +31,14 @@ export class CartCustomerController {
   }
 
   @Post('by-session')
-  @ApiResponse({
-    status: 200,
-    description: 'Cart has been retrieved/created successfully by session',
-    type: Cart,
+  @ApiRecordResponse(
+    Cart,
+    'Cart has been retrieved/created successfully by session',
+  )
+  @ApiOperation({
+    summary: 'Get or create cart by session',
+    description:
+      'Retrieve an existing cart by session ID or create a new one if it does not exist.',
   })
   async getCartBySession(
     @ReqUser() customer: ReqUserDto,

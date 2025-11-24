@@ -7,15 +7,18 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ReqUser } from '../../auth/decorators/req-user';
-import { ReqUserDto } from '../../auth/dto/response/req-user.dto';
-import { CreateOrderDto } from '../dto/create-order.dto';
-import { OrderCustomerService } from '../services/order.customer.service';
-import { Order } from '../entities/order.entity';
-import { PaginationDto } from '../../common/dto/pagination.dto';
-import { CustomerGuard } from '../../auth/guards/customer.guard';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomerAuth } from '../../auth/decorators/basic-auth';
+import { ReqUser } from '../../auth/decorators/req-user';
+import {
+  ApiPaginatedResponse,
+  ApiRecordResponse,
+} from '../../auth/decorators/response';
+import { ReqUserDto } from '../../auth/dto/response/req-user.dto';
+import { CustomerGuard } from '../../auth/guards/customer.guard';
+import { CreateOrderDto } from '../dto/create-order.dto';
+import { Order } from '../entities/order.entity';
+import { OrderCustomerService } from '../services/order.customer.service';
 
 @Controller('customer/orders')
 @ApiTags('customer orders')
@@ -25,10 +28,10 @@ export class OrderCustomerController {
   constructor(private readonly orderCustomerService: OrderCustomerService) {}
 
   @Post()
-  @ApiResponse({
-    status: 201,
-    description: 'Order has been placed successfully',
-    type: Order,
+  @ApiRecordResponse(Order, 'Order has been placed successfully', 201)
+  @ApiOperation({
+    summary: 'Place a new order',
+    description: 'Create a new order with the provided details.',
   })
   async placeOrder(
     @ReqUser() customer: ReqUserDto,
@@ -40,10 +43,11 @@ export class OrderCustomerController {
   @Get()
   @ApiQuery({ name: 'page', type: Number })
   @ApiQuery({ name: 'limit', type: Number })
-  @ApiResponse({
-    status: 200,
-    description: 'List of customer orders',
-    type: PaginationDto<Order>,
+  @ApiPaginatedResponse(Order, 'List of customer orders')
+  @ApiOperation({
+    summary: 'Get all orders for the customer',
+    description:
+      'Retrieve a paginated list of all orders for the authenticated customer.',
   })
   async findAll(
     @ReqUser() customer: ReqUserDto,

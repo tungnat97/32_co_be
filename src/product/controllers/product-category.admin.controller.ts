@@ -7,10 +7,13 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AdminAuth } from '../../auth/decorators/basic-auth';
+import {
+  ApiPaginatedResponse,
+  ApiRecordResponse,
+} from '../../auth/decorators/response';
 import { AdminGuard } from '../../auth/guards/admin.guard';
-import { PaginationDto } from '../../common/dto/pagination.dto';
 import { CreateProductCategoryDto } from '../dto/create-product-category.dto';
 import { ProductCategory } from '../entities/product-category.entity';
 import { ProductCategoryAdminService } from '../services/product-category.admin.service';
@@ -25,10 +28,14 @@ export class ProductCategoryAdminController {
   ) {}
 
   @Post()
-  @ApiResponse({
-    status: 201,
-    description: 'Product category has been created successfully',
-    type: ProductCategory,
+  @ApiRecordResponse(
+    ProductCategory,
+    'Product category has been created successfully',
+    201,
+  )
+  @ApiOperation({
+    summary: 'Create product category',
+    description: 'Create a new product category',
   })
   async create(@Body() dto: CreateProductCategoryDto): Promise<any> {
     return this.productCategoryAdminService.create(dto);
@@ -37,10 +44,10 @@ export class ProductCategoryAdminController {
   @Get()
   @ApiQuery({ name: 'page', type: Number })
   @ApiQuery({ name: 'limit', type: Number })
-  @ApiResponse({
-    status: 200,
-    description: 'List of all product categories',
-    type: PaginationDto<ProductCategory>,
+  @ApiPaginatedResponse(ProductCategory, 'List of all product categories')
+  @ApiOperation({
+    summary: 'Get all product categories',
+    description: 'Get all product categories',
   })
   async findAll(
     @Query('page', ParseIntPipe) page = 1,

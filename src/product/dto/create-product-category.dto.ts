@@ -3,4 +3,5 @@ import { ProductCategory } from '../entities/product-category.entity';
 
 export class CreateProductCategoryDto extends OmitType(ProductCategory, [
   '_id',
+  'isActive',
 ]) {}
