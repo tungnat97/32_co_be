@@ -5,6 +5,11 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "manualRestart": true,
-    "plugins": ["@nestjs/swagger"]
+    "plugins": [{
+      "name": "@nestjs/swagger",
+      "options": {
+        "introspectComments": true
+      }
+    }]
   }
 }
